@@ -1,1 +1,40 @@
+# Differential Gene Expression (DGE) Analysis
+
+
+# Step 1: Load necessary packages
+library(dplyr)
+
+# Step 2: Define the function to classify genes
+classify_gene <- function(logFC, padj, fc_threshold = 1, padj_threshold = 0.05) {
+  if(is.na(logFC) | is.na(padj)) return(NA)   # Handle missing values
+  if(padj > padj_threshold) return("Not_Significant")
+  if(logFC >= fc_threshold) return("Upregulated")
+  if(logFC <= -fc_threshold) return("Downregulated")
+  return("Not_Significant")
+}
+
+# Step 3: Load datasets
+data1 <- read.csv("C:/Users/dell/Documents/ai and biotechnology internship/DEGs_Data_1.csv")
+data2 <- read.csv("C:/Users/dell/Documents/ai and biotechnology internship/DEGs_Data_2.csv")
+
+
+# Step 4: Apply the function to classify genes
+data1$classification <- mapply(classify_gene, data1$logFC, data1$padj)
+data2$classification <- mapply(classify_gene, data2$logFC, data2$padj)
+
+# Step 5: Summary counts
+summary_data <- function(df) {
+  table(df$classification)
+}
+
+cat("Summary for Data 1:\n")
+print(summary_data(data1))
+
+cat("\nSummary for Data 2:\n")
+print(summary_data(data2))
+
+# Step 6: Save processed datasets
+write.csv(data1, "Processed_DEGs_Data_1.csv", row.names = FALSE)
+write.csv(data2, "Processed_DEGs_Data_2.csv", row.names = FALSE)
+save.image("NASSOUFI Chaimaa_Class_2_Assignment.RData")
 
